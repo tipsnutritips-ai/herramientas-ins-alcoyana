@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Herramientas SAE</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef1f4;color:#18212b}
+header{background:#111820;color:#fff;padding:20px 6%;display:flex;justify-content:space-between;align-items:center}
+header h1{margin:0;font-size:23px;font-weight:600} header span{font-size:12px;opacity:.65}
+main{max-width:1080px;margin:42px auto;padding:0 20px}.hero{text-align:center;margin-bottom:30px}
+.hero h2{margin:0 0 8px;font-size:32px}.hero p{margin:0;color:#6c7784}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.card{border:0;background:#fff;border-radius:16px;padding:24px;text-align:left;box-shadow:0 7px 25px #0001;cursor:pointer}
+.card:hover{transform:translateY(-2px)}.icon{font-size:32px}.card h3{margin:12px 0 7px}.card p{margin:0;color:#697586;line-height:1.45}
+.modal{display:none;position:fixed;inset:0;background:#0009;padding:18px;z-index:20}.modal.open{display:flex;align-items:center;justify-content:center}
+.box{background:#fff;border-radius:18px;max-width:1000px;width:100%;padding:30px;position:relative;max-height:94vh;overflow:auto}
+.close{position:absolute;right:16px;top:14px;border:0;background:#edf0f3;border-radius:50%;width:35px;height:35px;font-size:20px;cursor:pointer}
+.upload{border:2px dashed #a4adb8;border-radius:14px;padding:28px;text-align:center;margin:20px 0;background:#fafbfc}
+.upload label{cursor:pointer}.upload b{font-size:17px}.upload small{display:block;margin-top:7px;color:#727d89}
+input[type=file]{display:none}.preview{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.preview img{width:100%;height:145px;object-fit:cover;border-radius:9px}
+.order{background:#f4f6f8;border:1px solid #e1e5e9;border-radius:12px;padding:15px;margin:18px 0;line-height:1.7}
+.primary,.secondary{border:0;border-radius:9px;padding:12px 18px;font-weight:700;cursor:pointer}.primary{background:#111820;color:#fff}.secondary{background:#e7ebef;color:#18212b}
+.status{margin-top:14px;color:#5d6875;line-height:1.5}.progress{height:7px;background:#e5e8ec;border-radius:10px;margin-top:9px;overflow:hidden}.bar{height:100%;width:0;background:#111820}
+ .tag{display:inline-block;background:#edf1f4;border-radius:18px;padding:5px 9px;margin:3px;font-size:12px}
+.tutorial-card{border:0;background:#fff;border-radius:16px;padding:22px;text-align:left;box-shadow:0 7px 25px #0001;cursor:pointer;transition:.15s}.tutorial-card:hover{transform:translateY(-2px)}
+.tutorial-banner{background:#fff;color:#18212b;border:1px solid #e2e6ea!important;border-radius:16px;padding:22px;box-shadow:0 7px 25px #0001;cursor:pointer;transition:.15s}.tutorial-banner:hover{transform:translateY(-2px);box-shadow:0 10px 30px #0002}.tutorial-banner .icon{font-size:30px}.tutorial-banner h3{margin:9px 0 5px}.tutorial-banner p{margin:0;color:#697586}
+.tutorial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:20px}.tutorial-item{background:#f6f8fa;border:1px solid #e1e6eb;border-radius:14px;padding:18px}.tutorial-item h3{margin:0 0 6px}.tutorial-item p{margin:0 0 13px;color:#687482;font-size:13px}.tutorial-item input{width:100%;padding:11px 12px;border:1px solid #cbd2d9;border-radius:9px;font:inherit;margin-bottom:9px}.tutorial-actions{display:flex;gap:8px;flex-wrap:wrap}.tutorial-actions button{border:0;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer}.save-tutorial{background:#111820;color:#fff}.watch-tutorial{background:#e5eaee;color:#18212b}.watch-tutorial:disabled{opacity:.45;cursor:not-allowed}.tutorial-help{margin-top:18px;padding:12px 14px;background:#f4f6f8;border-radius:10px;color:#596674;font-size:13px;line-height:1.45}.cloud-status{display:flex;align-items:center;gap:8px;margin:14px 0;padding:10px 12px;border-radius:10px;background:#f5f7f9;color:#596674;font-size:13px}.cloud-dot{width:9px;height:9px;border-radius:50%;background:#b6bec7}.cloud-dot.ok{background:#35a853}.admin-panel{margin-top:16px;padding:14px;border:1px solid #e1e6eb;border-radius:12px;background:#fafbfc}.admin-panel summary{cursor:pointer;font-weight:700}.admin-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:12px}.admin-row input{width:100%;padding:10px 11px;border:1px solid #cbd2d9;border-radius:8px;font:inherit}.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.admin-actions button{border:0;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer}.admin-login{background:#111820;color:#fff}.admin-logout{background:#e7ebef;color:#18212b}.cloud-only{display:none}.is-admin .cloud-only{display:block}.public-note{font-size:12px;color:#7a8590;margin-top:8px}.tutorial-list{display:flex;flex-direction:column;gap:9px;margin-top:12px}.tutorial-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e0e5e9;border-radius:10px;padding:11px 12px}.tutorial-row .title{font-weight:700;color:#18212b}.tutorial-row .actions{display:flex;gap:7px;flex-wrap:wrap}.tutorial-row button{border:0;border-radius:8px;padding:8px 10px;font-weight:700;cursor:pointer}.edit-tutorial{background:#e9edf1;color:#18212b}.delete-tutorial{background:#f3dfe0;color:#8b1e25}.add-tutorial{margin-top:12px;padding:12px;background:#f5f7f9;border-radius:10px}.add-tutorial .form-row{display:grid;grid-template-columns:1fr 1.5fr auto;gap:8px}.add-tutorial input{width:100%;padding:10px 11px;border:1px solid #cbd2d9;border-radius:8px;font:inherit}.add-tutorial button{border:0;border-radius:8px;padding:10px 12px;background:#111820;color:#fff;font-weight:700;cursor:pointer}.empty-tutorial{color:#7a8590;font-size:13px;padding:8px 2px}.tutorial-editing{outline:2px solid #cbd5df}
+@media(max-width:650px){.preview{grid-template-columns:repeat(2,1fr)}.hero h2{font-size:27px}.tutorial-grid{grid-template-columns:1fr}.admin-row{grid-template-columns:1fr}.add-tutorial .form-row{grid-template-columns:1fr}.tutorial-row{align-items:flex-start;flex-direction:column}.tutorial-row .actions{width:100%}}
+
+.convenio-search{display:flex;gap:10px;margin:16px 0 12px}.convenio-search input{flex:1;padding:13px 14px;border:1px solid #cbd2d9;border-radius:10px;font:inherit}.convenio-search button{border:0;border-radius:10px;padding:12px 16px;background:#111820;color:#fff;font-weight:700;cursor:pointer}.convenio-help{font-size:13px;color:#687482;line-height:1.45}.convenio-status{margin:10px 0;padding:10px 12px;border-radius:10px;background:#f5f7f9;color:#596674;font-size:13px}.convenio-results{display:flex;flex-direction:column;gap:10px;margin-top:14px}.convenio-result{border:1px solid #e0e5e9;border-radius:11px;padding:12px;background:#fff}.convenio-result h4{margin:0 0 5px}.convenio-result p{margin:5px 0;color:#596674;font-size:13px;line-height:1.45}.convenio-result mark{background:#fff1a8;border-radius:3px;padding:0 2px}.convenio-result .meta{font-size:12px;color:#7a8590}.convenio-result button{margin-top:7px;border:0;border-radius:8px;padding:8px 10px;background:#e9edf1;color:#18212b;font-weight:700;cursor:pointer}.convenio-admin{margin-top:18px;padding:14px;border:1px solid #e1e6eb;border-radius:12px;background:#fafbfc}.convenio-admin h3{margin:0 0 8px}.convenio-upload{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.convenio-upload input,.convenio-upload select{width:100%;padding:10px 11px;border:1px solid #cbd2d9;border-radius:8px;font:inherit}.convenio-upload .full{grid-column:1/-1}.convenio-upload button{grid-column:1/-1;border:0;border-radius:8px;padding:10px 12px;background:#111820;color:#fff;font-weight:700;cursor:pointer}.convenio-docs{display:flex;flex-direction:column;gap:7px;margin-top:12px}.convenio-doc{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;background:#fff;border:1px solid #e0e5e9;border-radius:8px;font-size:13px}.convenio-doc button{border:0;border-radius:7px;padding:7px 9px;background:#f3dfe0;color:#8b1e25;font-weight:700;cursor:pointer}.convenio-doc small{color:#7a8590}.convenio-tag{display:inline-block;padding:3px 7px;border-radius:999px;background:#edf1f4;font-size:11px;font-weight:700;margin-right:5px}@media(max-width:650px){.convenio-search{flex-direction:column}.convenio-upload{grid-template-columns:1fr}.convenio-upload .full{grid-column:auto}.convenio-doc{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header><h1>🚌 Herramientas SAE</h1><span>Panel de herramientas</span></header>
+<main>
+<section class="hero"><h2>Herramientas SAE</h2><p>Organiza los servicios y genera un PDF profesional.</p></section>
+<section style="margin-bottom:18px"><button class="tutorial-banner" style="width:100%;border:0;text-align:left" onclick="openModal('tutorials')"><div class="icon">🎓</div><h3>TUTORIALES</h3><p>Accede a tutoriales de SAE, C1, C2 y CALLE mediante vídeos de YouTube.</p></button></section>
+<section class="grid">
+<button class="card" onclick="openModal('services')"><div class="icon">📄</div><h3>Servicios → PDF</h3><p>Hasta 4 archivos (JPG, PNG o PDF). Orden fijo y composición limpia en 2 páginas.</p></button>
+<button class="card" onclick="openAgreement()"><div class="icon">🔎</div><h3>Buscador de convenio</h3><p>Busca palabras y frases dentro del convenio y sus modificaciones.</p></button>
+<button class="card" onclick="openModal('lines')"><div class="icon">🚌</div><h3>Líneas</h3><p>Módulo preparado para consultas.</p></button>
+<button class="card" onclick="openModal('shifts')"><div class="icon">📊</div><h3>Cuadros y turnos</h3><p>Módulo preparado para planificación.</p></button>
+</section>
+</main>
+
+<div id="services" class="modal"><div class="box">
+<button class="close" onclick="closeModal('services')">×</button>
+<h2>📄 Servicios → PDF</h2>
+<p>Sube hasta 4 archivos JPG, PNG o PDF. La aplicación identifica cada bloque de <b>LÍNEA</b>, conserva su contenido original y lo recompone en 2 páginas sin partir ningún servicio.</p>
+<div class="upload">
+<label for="files"><b>📁 Seleccionar hasta 4 archivos</b><small>JPG, PNG o PDF. Puedes mezclarlos y pueden estar desordenados.</small></label>
+<input id="files" type="file" accept="image/*,.pdf,application/pdf" multiple onchange="showPreview()">
+</div>
+<div id="preview" class="preview"></div>
+<div class="order">
+<b>PÁGINA 1</b><br>C6 · 23 · C53 · C2 · 41 · C51 · C52 · M1 · M2 · 35
+<br><br>
+<b>PÁGINA 2</b><br>21 · 24 · 45 · 46 · 40A · 40B · 38 · 36 · 30
+</div>
+<button class="primary" onclick="processPhotos()">🔍 Procesar y generar PDF</button>
+<button class="secondary" onclick="resetTool()">Limpiar</button>
+<div id="status" class="status"></div>
+<div class="progress"><div id="bar" class="bar"></div></div>
+<div id="detected"></div>
+</div></div>
+
+<div id="tutorials" class="modal"><div class="box">
+<button class="close" onclick="closeModal('tutorials')">×</button>
+<h2>🎓 Tutoriales</h2>
+<p>Selecciona el apartado. Puedes tener <b>tantos vídeos como quieras</b> dentro de cada categoría. Los enlaces se almacenan en la nube y estarán disponibles desde cualquier dispositivo.</p>
+<div class="cloud-status"><span id="cloud-dot" class="cloud-dot"></span><span id="cloud-status-text">Comprobando conexión...</span></div>
+<div class="tutorial-grid">
+  <div class="tutorial-item"><h3>🚌 SAE</h3><p>Tutoriales relacionados con SAE.</p><div id="tutorial-list-sae" class="tutorial-list"></div><div class="add-tutorial cloud-only"><div class="form-row"><input id="new-title-sae" placeholder="Título del tutorial"><input id="new-url-sae" type="url" placeholder="Enlace de YouTube"><button onclick="addTutorial('sae')">+ Añadir</button></div></div></div>
+  <div class="tutorial-item"><h3>1️⃣ C1</h3><p>Tutoriales relacionados con C1.</p><div id="tutorial-list-c1" class="tutorial-list"></div><div class="add-tutorial cloud-only"><div class="form-row"><input id="new-title-c1" placeholder="Título del tutorial"><input id="new-url-c1" type="url" placeholder="Enlace de YouTube"><button onclick="addTutorial('c1')">+ Añadir</button></div></div></div>
+  <div class="tutorial-item"><h3>2️⃣ C2</h3><p>Tutoriales relacionados con C2.</p><div id="tutorial-list-c2" class="tutorial-list"></div><div class="add-tutorial cloud-only"><div class="form-row"><input id="new-title-c2" placeholder="Título del tutorial"><input id="new-url-c2" type="url" placeholder="Enlace de YouTube"><button onclick="addTutorial('c2')">+ Añadir</button></div></div></div>
+  <div class="tutorial-item"><h3>🚦 CALLE</h3><p>Tutoriales relacionados con CALLE.</p><div id="tutorial-list-calle" class="tutorial-list"></div><div class="add-tutorial cloud-only"><div class="form-row"><input id="new-title-calle" placeholder="Título del tutorial"><input id="new-url-calle" type="url" placeholder="Enlace de YouTube"><button onclick="addTutorial('calle')">+ Añadir</button></div></div></div>
+</div>
+<div class="admin-panel" id="admin-panel">
+  <details>
+    <summary>🔐 Administración de tutoriales</summary>
+    <div id="admin-login-area">
+      <div class="admin-row"><input id="admin-email" type="email" placeholder="Correo del administrador"><input id="admin-password" type="password" placeholder="Contraseña"><button class="admin-login" onclick="adminLogin()">Entrar</button></div>
+      <div class="public-note">Solo el administrador puede añadir, modificar o eliminar enlaces. Los demás usuarios únicamente pueden ver los vídeos.</div>
+    </div>
+    <div id="admin-session-area" style="display:none"><div id="admin-user" class="public-note"></div><div class="admin-actions"><button class="admin-logout" onclick="adminLogout()">Cerrar sesión</button></div></div>
+  </details>
+</div>
+<div class="tutorial-help"><b>Importante:</b> para que cualquiera que tenga el enlace pueda reproducir un vídeo sin dar permisos individuales, en YouTube utiliza <b>Oculto / No listado</b>. Un vídeo marcado como “Privado” solo podrá verlo quien tenga permiso en YouTube.</div>
+</div></div>
+
+<div id="agreement" class="modal"><div class="box"><button class="close" onclick="closeModal('agreement')">×</button>
+<h2>🔎 Buscador de convenio</h2>
+<p class="convenio-help">Busca directamente dentro del convenio por palabras o frases: <b>jornada</b>, <b>vacaciones</b>, <b>festivo</b>, <b>salario</b>, <b>antigüedad</b>, <b>descansos</b>, <b>horas extraordinarias</b>, etc. El buscador trabaja sobre el texto de los PDF y te indica el documento y la página.</p>
+<div class="convenio-search"><input id="convenio-query" placeholder="¿Qué quieres buscar? Ej.: jornada máxima, vacaciones, festivo..." onkeydown="if(event.key==='Enter')searchConvenio()"><button onclick="searchConvenio()">🔍 Buscar</button></div>
+<div id="convenio-status" class="convenio-status">Preparando documentos...</div>
+<div id="convenio-results" class="convenio-results"></div>
+<div id="convenio-admin" class="convenio-admin cloud-only">
+<h3>⚙️ Actualizar convenio</h3>
+<p class="convenio-help">Solo el administrador. Cuando se publique un nuevo convenio o una modificación, puedes subir el PDF aquí y quedará disponible para todos los dispositivos.</p>
+<div class="convenio-upload"><input id="convenio-file" class="full" type="file" accept="application/pdf,.pdf"><input id="convenio-title" placeholder="Título, por ejemplo: V Convenio Alcoyana 2026-2029"><select id="convenio-type"><option value="principal">Convenio principal</option><option value="modificacion">Modificación</option></select><input id="convenio-date" type="date"><button onclick="uploadConvenio()">⬆️ Subir y publicar</button></div>
+<div id="convenio-docs" class="convenio-docs"></div>
+</div>
+</div></div>
+<div id="lines" class="modal"><div class="box"><button class="close" onclick="closeModal('lines')">×</button><h2>🚌 Líneas</h2><p>Módulo preparado.</p></div></div>
+<div id="shifts" class="modal"><div class="box"><button class="close" onclick="closeModal('shifts')">×</button><h2>📊 Cuadros y turnos</h2><p>Módulo preparado.</p></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="convenio-index.js"></script>
+<script>
+const PAGE1 = ['C6','23','C53','C2','41','C51','C52','M1','M2','35'];
+const PAGE2 = ['21','24','45','46','40A','40B','38','36','30'];
+const ALL_ORDER = PAGE1.concat(PAGE2);
+let selectedFiles = [];
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function cleanText(s){
+  return (s || '').toUpperCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^A-Z0-9]/g,'');
+}
+
+function canonicalLine(s){
+  const x = cleanText(s);
+  if(x === '135') return '35';
+  return x;
+}
+
+const TUTORIAL_IDS = ['sae','c1','c2','calle'];
+let supabaseClient = null;
+let tutorialCloudReady = false;
+let tutorialAdmin = false;
+let tutorialRows = [];
+
+function validYoutubeUrl(value){
+  try{
+    const u=new URL((value||'').trim());
+    const host=u.hostname.toLowerCase().replace(/^www\./,'');
+    return ['youtube.com','m.youtube.com','youtu.be'].includes(host) && (host==='youtu.be' ? u.pathname.length>1 : (u.pathname==='/watch' ? !!u.searchParams.get('v') : u.pathname.startsWith('/shorts/') || u.pathname.startsWith('/embed/')));
+  }catch(e){ return false; }
+}
+function setCloudStatus(text,ok=false){
+  const dot=document.getElementById('cloud-dot'), label=document.getElementById('cloud-status-text');
+  if(dot) dot.classList.toggle('ok',ok);
+  if(label) label.textContent=text;
+}
+function setAdminUI(){
+  document.body.classList.toggle('is-admin',tutorialAdmin);
+  const login=document.getElementById('admin-login-area'), session=document.getElementById('admin-session-area');
+  if(login) login.style.display=tutorialAdmin?'none':'block';
+  if(session) session.style.display=tutorialAdmin?'block':'none';
+  document.querySelectorAll('.cloud-only').forEach(el=>el.style.display=tutorialAdmin ? '' : 'none');
+  const user=document.getElementById('admin-user');
+  if(user && tutorialAdmin && supabaseClient) supabaseClient.auth.getUser().then(({data})=>{user.textContent='Sesión iniciada: '+(data.user?.email||'administrador');});
+}
+
+const CONVENIO_BUCKET='convenios';
+const LOCAL_CONVENIOS=[
+{id:'local-base',titulo:'V Convenio Colectivo Automóviles La Alcoyana, S.A. (2022-2025)',tipo:'principal',fecha:'2024-01-25',localPath:'convenios/v-convenio-alcoyana-2024.pdf'},
+{id:'local-mod-2024',titulo:'Modificación del V Convenio — BOP 02/09/2024',tipo:'modificacion',fecha:'2024-09-02',localPath:'convenios/modificacion-alcoyana-2024.pdf'},
+{id:'local-mod-2025',titulo:'Modificación del V Convenio — BOP 12/03/2025',tipo:'modificacion',fecha:'2025-03-12',localPath:'convenios/modificacion-alcoyana-2025.pdf'}
+];
+let convenioDocs=[];
+let convenioTextCache={};
+let convenioCloudReady=false;
+
+function normConvenio(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
+function escapeHtml2(s){return escapeHtml(s||'');}
+function snippetFor(text,q){
+  const n=normConvenio(text), nq=normConvenio(q); const pos=n.indexOf(nq); if(pos<0)return '';
+  const start=Math.max(0,pos-180), end=Math.min(text.length,pos+q.length+360); let out=text.slice(start,end).replace(/\s+/g,' ').trim();
+  if(start>0)out='…'+out; if(end<text.length)out+='…';
+  const idx=normConvenio(out).indexOf(nq);
+  if(idx>=0){const before=out.slice(0,idx), hit=out.slice(idx,idx+q.length), after=out.slice(idx+q.length);return escapeHtml2(before)+'<mark>'+escapeHtml2(hit)+'</mark>'+escapeHtml2(after);}
+  return escapeHtml2(out);
+}
+
+async function loadConvenioDocs(){
+  if(!supabaseClient){convenioDocs=LOCAL_CONVENIOS; renderConvenioDocs(); setConvenioStatus('Convenio local disponible.'); return convenioDocs;}
+  const {data,error}=await supabaseClient.from('convenios').select('id,titulo,tipo,fecha,storage_path,activo,created_at').eq('activo',true).order('fecha',{ascending:false}).order('created_at',{ascending:false});
+  if(error){console.warn('convenios table:',error); convenioDocs=LOCAL_CONVENIOS; renderConvenioDocs(); setConvenioStatus('Convenio local disponible.'); return convenioDocs;}
+  convenioDocs=(data&&data.length)?data:LOCAL_CONVENIOS; renderConvenioDocs(); return convenioDocs;
+}
+function renderConvenioDocs(){
+  const box=document.getElementById('convenio-docs'); if(!box)return;
+  if(!tutorialAdmin){box.innerHTML='';return;}
+  const cloudDocs=convenioDocs.filter(d=>!d.localPath);
+  box.innerHTML=cloudDocs.map(d=>`<div class="convenio-doc"><div><span class="convenio-tag">${d.tipo==='principal'?'PRINCIPAL':'MODIFICACIÓN'}</span><b>${escapeHtml(d.titulo)}</b><br><small>${d.fecha||''}</small></div><button onclick="deleteConvenio('${d.id}')">🗑️ Eliminar</button></div>`).join('') || '<small>No hay documentos en la nube todavía.</small>';
+}
+async function getConvenioPdfBytes(doc){
+  if(convenioTextCache[doc.id])return convenioTextCache[doc.id];
+  // Los tres convenios incluidos de fábrica tienen un índice de texto propio.
+  // Esto hace que la búsqueda funcione incluso sin Supabase y sin descargar/procesar el PDF.
+  if(doc.localPath && window.CONVENIO_TEXT_INDEX && window.CONVENIO_TEXT_INDEX[doc.id]){
+    convenioTextCache[doc.id]=window.CONVENIO_TEXT_INDEX[doc.id];
+    return convenioTextCache[doc.id];
+  }
+  let res;
+  if(doc.localPath){res=await fetch(doc.localPath);}else{
+    if(!supabaseClient) throw new Error('Supabase no está disponible para este documento.');
+    const {data}=supabaseClient.storage.from(CONVENIO_BUCKET).getPublicUrl(doc.storage_path);
+    res=await fetch(data.publicUrl);
+  }
+  if(!res.ok)throw new Error('No se pudo descargar '+doc.titulo+' (HTTP '+res.status+')');
+  const bytes=new Uint8Array(await res.arrayBuffer());
+  const pdf=await pdfjsLib.getDocument({data:bytes}).promise; const pages=[];
+  for(let p=1;p<=pdf.numPages;p++){
+    const page=await pdf.getPage(p); const tc=await page.getTextContent(); const text=tc.items.map(x=>x.str).join(' '); pages.push(text);
+    if(p%10===0)setConvenioStatus(`Leyendo ${doc.titulo}: página ${p}/${pdf.numPages}…`);
+  }
+  convenioTextCache[doc.id]=pages; return pages;
+}
+function setConvenioStatus(t){const e=document.getElementById('convenio-status');if(e)e.textContent=t;}
+async function searchConvenio(){
+  const q=(document.getElementById('convenio-query').value||'').trim();
+  const out=document.getElementById('convenio-results');
+  if(!q){out.innerHTML='';setConvenioStatus('Escribe una palabra o frase para buscar.');return;}
+  await loadConvenioDocs(); if(!convenioDocs.length){setConvenioStatus('No hay documentos del convenio disponibles para buscar.');return;}
+  out.innerHTML=''; setConvenioStatus('Buscando…'); const results=[];
+  for(const doc of convenioDocs){
+    try{
+      const pages=await getConvenioPdfBytes(doc);
+      const nq=normConvenio(q);
+      for(let i=0;i<pages.length;i++){
+        if(normConvenio(pages[i]).includes(nq)) results.push({doc,page:i+1,text:pages[i]});
+      }
+    }catch(e){
+      console.error('Error buscando en convenio:',e);
+      setConvenioStatus('No se pudo leer uno de los documentos: '+(e.message||e));
+    }
+  }
+  results.sort((a,b)=>{const pa=a.doc.tipo==='principal'?1:0,pb=b.doc.tipo==='principal'?1:0;return pa-pb || String(b.doc.fecha||'').localeCompare(String(a.doc.fecha||''));});
+  setConvenioStatus(results.length?`Encontrados ${results.length} resultado(s).`:'No se ha encontrado esa palabra o frase en los documentos publicados.');
+  out.innerHTML=results.slice(0,80).map(r=>{const pdfUrl=r.doc.localPath?r.doc.localPath:supabaseClient.storage.from(CONVENIO_BUCKET).getPublicUrl(r.doc.storage_path).data.publicUrl;return `<div class="convenio-result"><h4>${escapeHtml(r.doc.titulo)}</h4><div class="meta">${r.doc.tipo==='principal'?'Convenio principal':'Modificación'} · ${r.doc.fecha||''} · página ${r.page}</div><p>${snippetFor(r.text,q)}</p><button onclick="window.open('${pdfUrl}#page=${r.page}','_blank','noopener,noreferrer')">📄 Abrir página ${r.page}</button></div>`}).join('');
+}
+async function uploadConvenio(){
+  if(!tutorialAdmin||!supabaseClient){alert('Inicia sesión como administrador.');return;}
+  const file=document.getElementById('convenio-file').files[0], title=document.getElementById('convenio-title').value.trim(), type=document.getElementById('convenio-type').value, date=document.getElementById('convenio-date').value;
+  if(!file||file.type!=='application/pdf'){alert('Selecciona un PDF.');return;}
+  if(!title){alert('Escribe un título para el documento.');return;}
+  const id=crypto.randomUUID(); const path=`${id}.pdf`;
+  setConvenioStatus('Subiendo el PDF…');
+  const {error:upErr}=await supabaseClient.storage.from(CONVENIO_BUCKET).upload(path,file,{contentType:'application/pdf',upsert:false});
+  if(upErr){alert('No se pudo subir el PDF: '+upErr.message);return;}
+  if(type==='principal')await supabaseClient.from('convenios').update({activo:false}).eq('tipo','principal');
+  const {error:dbErr}=await supabaseClient.from('convenios').insert({titulo:title,tipo:type,fecha:date||null,storage_path:path,activo:true});
+  if(dbErr){await supabaseClient.storage.from(CONVENIO_BUCKET).remove([path]);alert('No se pudo guardar el documento: '+dbErr.message);return;}
+  document.getElementById('convenio-file').value='';document.getElementById('convenio-title').value='';document.getElementById('convenio-date').value='';convenioTextCache={};await loadConvenioDocs();setConvenioStatus('Convenio actualizado y disponible para todos los dispositivos.');
+}
+async function deleteConvenio(id){
+  if(!tutorialAdmin||!confirm('¿Eliminar este documento del convenio?'))return;
+  const doc=convenioDocs.find(x=>x.id===id); if(!doc)return;
+  const {error:e1}=await supabaseClient.from('convenios').delete().eq('id',id); if(e1){alert('No se pudo eliminar: '+e1.message);return;}
+  const {error:e2}=await supabaseClient.storage.from(CONVENIO_BUCKET).remove([doc.storage_path]); if(e2)console.warn(e2);
+  convenioTextCache={};await loadConvenioDocs();setConvenioStatus('Documento eliminado.');
+}
+function openAgreement(){openModal('agreement');loadConvenioDocs();setConvenioStatus('Escribe una palabra o frase para buscar.');}
+
+async function initTutorialCloud(){
+  if(!window.supabase || !window.SAE_SUPABASE_URL || !window.SAE_SUPABASE_PUBLISHABLE_KEY){
+    tutorialCloudReady=false; tutorialAdmin=false; setAdminUI(); setCloudStatus('Falta configurar la conexión con la nube.'); return;
+  }
+  try{
+    supabaseClient=window.supabase.createClient(window.SAE_SUPABASE_URL,window.SAE_SUPABASE_PUBLISHABLE_KEY);
+    tutorialCloudReady=true;
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    tutorialAdmin=!!session; setAdminUI();
+    await loadTutorials();
+    await loadConvenioDocs();
+    supabaseClient.auth.onAuthStateChange((_event,session)=>{ tutorialAdmin=!!session; setAdminUI(); loadTutorials(); loadConvenioDocs(); });
+  }catch(e){
+    tutorialCloudReady=false; tutorialAdmin=false; setAdminUI(); setCloudStatus('No se pudo conectar con la nube.'); console.error(e);
+  }
+}
+async function loadTutorials(){
+  if(!tutorialCloudReady || !supabaseClient){ renderTutorials([]); return; }
+  const {data,error}=await supabaseClient.from('tutoriales').select('id,categoria,titulo,url,orden,created_at').in('categoria',TUTORIAL_IDS).order('categoria').order('orden').order('created_at');
+  if(error){ console.error(error); renderTutorials([]); setCloudStatus('Conectado, pero falta configurar la tabla de tutoriales.',false); return; }
+  tutorialRows=data||[]; renderTutorials(tutorialRows); setCloudStatus('Tutoriales sincronizados en la nube.',true);
+}
+function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
+function renderTutorials(rows){
+  TUTORIAL_IDS.forEach(cat=>{
+    const box=document.getElementById('tutorial-list-'+cat); if(!box)return;
+    const list=(rows||[]).filter(r=>r.categoria===cat).sort((a,b)=>(a.orden??0)-(b.orden??0));
+    if(!list.length){ box.innerHTML='<div class="empty-tutorial">Todavía no hay tutoriales.</div>'; return; }
+    box.innerHTML=list.map(r=>`<div class="tutorial-row"><div class="title">${escapeHtml(r.titulo)}</div><div class="actions"><button class="watch-tutorial" onclick="openTutorialUrl('${encodeURIComponent(r.url)}')">▶ Ver</button>${tutorialAdmin?`<button class="edit-tutorial" onclick="editTutorial('${r.id}')">✏️ Editar</button><button class="delete-tutorial" onclick="deleteTutorial('${r.id}')">🗑️ Eliminar</button>`:''}</div></div>`).join('');
+  });
+}
+function openTutorialUrl(encoded){const url=decodeURIComponent(encoded);if(validYoutubeUrl(url))window.open(url,'_blank','noopener,noreferrer');}
+async function addTutorial(category){
+  if(!tutorialAdmin){alert('Inicia sesión como administrador.');return;}
+  const title=document.getElementById('new-title-'+category)?.value.trim(), url=document.getElementById('new-url-'+category)?.value.trim();
+  if(!title){alert('Escribe un título para el tutorial.');return;}
+  if(!validYoutubeUrl(url)){alert('Introduce un enlace válido de YouTube.');return;}
+  const current=tutorialRows.filter(r=>r.categoria===category);
+  const next=Math.max(-1,...current.map(r=>Number(r.orden)||0))+1;
+  const {error}=await supabaseClient.from('tutoriales').insert({categoria:category,titulo:title,url,orden:next});
+  if(error){console.error(error);alert('No se pudo guardar: '+error.message);return;}
+  document.getElementById('new-title-'+category).value=''; document.getElementById('new-url-'+category).value=''; await loadTutorials();
+}
+async function editTutorial(id){
+  const row=tutorialRows.find(r=>r.id===id); if(!row)return;
+  const title=prompt('Título del tutorial:',row.titulo); if(title===null)return;
+  const url=prompt('Enlace de YouTube:',row.url); if(url===null)return;
+  if(!title.trim()||!validYoutubeUrl(url.trim())){alert('Título o enlace no válido.');return;}
+  const {error}=await supabaseClient.from('tutoriales').update({titulo:title.trim(),url:url.trim()}).eq('id',id);
+  if(error){alert('No se pudo modificar: '+error.message);return;} await loadTutorials();
+}
+async function deleteTutorial(id){
+  const row=tutorialRows.find(r=>r.id===id); if(!row)return;
+  if(!confirm('¿Eliminar el tutorial "'+row.titulo+'"?'))return;
+  const {error}=await supabaseClient.from('tutoriales').delete().eq('id',id);
+  if(error){alert('No se pudo eliminar: '+error.message);return;} await loadTutorials();
+}
+async function adminLogin(){
+  if(!tutorialCloudReady || !supabaseClient){alert('Configura primero Supabase.');return;}
+  const email=document.getElementById('admin-email').value.trim(), password=document.getElementById('admin-password').value;
+  if(!email||!password){alert('Introduce correo y contraseña.');return;}
+  const {error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error){alert('No se pudo iniciar sesión: '+error.message);return;}
+  tutorialAdmin=true; setAdminUI(); await loadTutorials();
+}
+async function adminLogout(){if(supabaseClient)await supabaseClient.auth.signOut();tutorialAdmin=false;setAdminUI();await loadTutorials();renderConvenioDocs();}
+document.addEventListener('DOMContentLoaded',initTutorialCloud);
+
+async function showPreview(){
+  selectedFiles = Array.from(document.getElementById('files').files).slice(0,4);
+  const preview=document.getElementById('preview');
+  preview.innerHTML='';
+
+  for(let i=0;i<selectedFiles.length;i++){
+    const f=selectedFiles[i];
+    const card=document.createElement('div');
+    card.style.cssText='background:#f5f7f9;border-radius:10px;padding:10px;text-align:center;min-height:145px;display:flex;flex-direction:column;justify-content:center;';
+    if(isPDF(f)){
+      card.innerHTML='<div style="font-size:42px">📄</div><b>PDF '+(i+1)+'</b><small style="display:block;color:#697586;margin-top:5px;word-break:break-word">'+escapeHtml(f.name)+'</small>';
+      try{
+        const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;
+        card.innerHTML+='<small style="display:block;color:#697586;margin-top:4px">'+pdf.numPages+' página(s)</small>';
+      }catch(e){ card.innerHTML+='<small style="display:block;color:#b44;margin-top:4px">PDF no legible</small>'; }
+    }else{
+      const img=document.createElement('img');
+      img.src=URL.createObjectURL(f);
+      img.style.cssText='width:100%;height:105px;object-fit:cover;border-radius:9px;';
+      card.appendChild(img);
+      const name=document.createElement('small');
+      name.textContent=(i+1)+'. '+f.name;
+      name.style.cssText='display:block;color:#697586;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      card.appendChild(name);
+    }
+    preview.appendChild(card);
+  }
+  document.getElementById('status').textContent = selectedFiles.length + ' archivo(s) cargado(s).';
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function isPDF(file){
+  return file.type==='application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+}
+
+function resetTool(){
+  selectedFiles=[];
+  document.getElementById('files').value='';
+  document.getElementById('preview').innerHTML='';
+  document.getElementById('detected').innerHTML='';
+  document.getElementById('status').textContent='';
+  document.getElementById('bar').style.width='0';
+}
+
+function setProgress(n){ document.getElementById('bar').style.width=Math.max(0,Math.min(100,n))+'%'; }
+
+function findLineFromRow(words,index){
+  const y=words[index].bbox.y0;
+  const row=words.filter(w=>Math.abs(w.bbox.y0-y)<24).sort((a,b)=>a.bbox.x0-b.bbox.x0);
+  const pos=row.findIndex(w=>w===words[index]);
+  const text=row.slice(pos,pos+10).map(w=>w.text).join(' ');
+  const compact=cleanText(text);
+  const match=compact.match(/(?:LINEA)(C\d+|M\d+|\d{1,3}[A-Z]?)/i) || compact.match(/(C\d+|M\d+|\d{1,3}[A-Z]?)/i);
+  return match ? canonicalLine(match[1]) : null;
+}
+
+function lineFromOCRText(text){
+  const compact=cleanText(text);
+  if(!compact.includes('LINEA')) return null;
+  const match=compact.match(/LINEA(C\d+|M\d+|\d{1,3}[A-Z]?)/i);
+  return match ? canonicalLine(match[1]) : null;
+}
+
+function isTarget(line){ return ALL_ORDER.includes(line); }
+
+async function processPhotos(){
+  if(!selectedFiles.length){ alert('Selecciona al menos un archivo.'); return; }
+  const status=document.getElementById('status');
+  const detected=document.getElementById('detected');
+  let blocks=[];
+  let worker=null;
+  try{
+    status.textContent='Preparando reconocimiento de servicios...'; setProgress(2);
+    worker=await Tesseract.createWorker('spa',1,{logger:m=>{
+      if(m.status==='recognizing text') setProgress(Math.min(88,5+(m.progress||0)*80));
+    }});
+    await worker.setParameters({preserve_interword_spaces:'1',user_defined_dpi:'300'});
+
+    for(let fi=0;fi<selectedFiles.length;fi++){
+      const file=selectedFiles[fi];
+      if(isPDF(file)){
+        status.textContent='Leyendo PDF '+(fi+1)+' de '+selectedFiles.length+'...';
+        const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+        for(let pn=1;pn<=pdf.numPages;pn++){
+          status.textContent='Analizando PDF '+(fi+1)+' · página '+pn+' de '+pdf.numPages+'...';
+          const page=await pdf.getPage(pn);
+          const viewport=page.getViewport({scale:3});
+          const canvas=document.createElement('canvas');
+          canvas.width=Math.ceil(viewport.width); canvas.height=Math.ceil(viewport.height);
+          await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+          await analyzeSource(canvas,worker,blocks,fi+'-pdf-'+pn);
+        }
+      }else{
+        status.textContent='Analizando imagen '+(fi+1)+' de '+selectedFiles.length+'...';
+        const url=URL.createObjectURL(file);
+        const img=await loadImage(url);
+        await analyzeSource(img,worker,blocks,fi+'-img');
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    // Si una línea aparece en más de una foto, NO mezclamos trozos de ambas.
+    // Elegimos el bloque más completo (mayor altura de contenido) y descartamos
+    // el duplicado completo/solapado.
+    const unique=[];
+    for(const b of blocks){
+      const old=unique.find(x=>x.line===b.line);
+      if(!old) unique.push(b);
+      else if((b.bottom-b.top)>(old.bottom-old.top)) Object.assign(old,b);
+    }
+    blocks=unique.sort((a,b)=>ALL_ORDER.indexOf(a.line)-ALL_ORDER.indexOf(b.line));
+
+    const found=blocks.map(b=>b.line);
+    const missing=ALL_ORDER.filter(x=>!found.includes(x));
+    detected.innerHTML='<p><b>Servicios encontrados:</b> '+found.length+' / '+ALL_ORDER.length+'</p>'+
+      found.map(b=>'<span class="tag">✓ '+b+'</span>').join('')+
+      (missing.length?'<p style="margin-top:12px"><b style="color:#a51d2d">FALTAN:</b> '+missing.map(x=>'<span class="tag" style="background:#f8dddd;color:#8b1e25">'+x+'</span>').join(' ')+'</p>':'<p style="color:#287a3e"><b>✓ Están todas las líneas solicitadas.</b></p>');
+
+    if(!blocks.length){
+      status.textContent='No he podido localizar cabeceras de línea. Se han probado lecturas por página y por separadores.';
+      setProgress(0); return;
+    }
+
+    // No generamos un PDF incompleto. Así nunca se "comen" servicios ni se
+    // presenta como correcto un documento al que le falte una línea.
+    if(missing.length){
+      status.textContent='NO genero todavía el PDF porque faltan '+missing.length+' líneas. Revisa las fotos o añade las páginas que las contienen.';
+      setProgress(100); return;
+    }
+
+    status.textContent='Todas las líneas encontradas. Montando PDF sin cortar servicios...'; setProgress(90);
+    await createPDF(blocks); setProgress(100);
+    status.textContent='PDF generado correctamente: '+found.join(', ')+'.';
+  }catch(err){
+    console.error(err); status.textContent='Error al leer el archivo: '+(err.message||err); setProgress(0);
+  }finally{
+    if(worker){ try{await worker.terminate();}catch(e){} }
+  }
+}
+
+async function analyzeSource(source,worker,blocks,sourceId){
+  const W=source.naturalWidth||source.width, H=source.naturalHeight||source.height;
+  const candidates=[];
+
+  // 1) Detectamos las líneas horizontales largas que hay justo debajo de cada
+  // cabecera. Esto es muchísimo más fiable que buscar números sueltos dentro
+  // de la tabla: una hora "23:37" nunca genera una línea horizontal larga.
+  const separators=detectHorizontalSeparators(source);
+  for(const sy of separators){
+    const y0=Math.max(0,sy-82), y1=Math.min(H,sy+8);
+    const strip=makeOCRCanvasFromRect(source,0,y0,W,y1-y0,2.4,'gray');
+    for(const psm of ['6','7','11']){
+      await worker.setParameters({tessedit_pageseg_mode:psm,preserve_interword_spaces:'1'});
+      const r=await worker.recognize(strip.canvas);
+      const found=extractHeaderCandidates(r.data||{},strip.scale,W,H,y0);
+      for(const c of found) addCandidate(candidates,c);
+    }
+  }
+
+  // 2) OCR de página completa como respaldo para fotos donde la regla está
+  // cortada, torcida o demasiado clara.
+  for(const mode of ['normal','gray','threshold']){
+    const v=makeOCRCanvas(source,1.45,mode);
+    for(const psm of ['6','11']){
+      await worker.setParameters({tessedit_pageseg_mode:psm,preserve_interword_spaces:'1'});
+      const result=await worker.recognize(v.canvas);
+      const found=extractHeaderCandidates(result.data||{},v.scale,W,H,0);
+      for(const c of found) addCandidate(candidates,c);
+    }
+  }
+
+  candidates.sort((a,b)=>a.y-b.y);
+
+  // Una misma cabecera puede haber sido reconocida varias veces. Agrupamos
+  // por línea y por posición, pero conservamos también dos detecciones de la
+  // misma línea si están realmente separadas (por ejemplo, dos páginas).
+  const clean=[];
+  for(const c of candidates){
+    const same=clean.find(x=>x.line===c.line && Math.abs(x.y-c.y)<35);
+    if(!same) clean.push({...c});
+    else if((c.confidence||0)>(same.confidence||0)) Object.assign(same,c);
+  }
+  clean.sort((a,b)=>a.y-b.y);
+
+  for(let i=0;i<clean.length;i++){
+    const c=clean[i];
+    if(!isTarget(c.line)) continue;
+    const next=clean.slice(i+1).find(x=>x.y>c.y+18);
+    // El servicio empieza justo antes de su cabecera y termina justo antes de
+    // la siguiente cabecera. Nunca usamos el siguiente número/horario como fin.
+    const top=Math.max(0,c.y-9);
+    const bottom=Math.min(H,next ? next.y-9 : H);
+    if(bottom-top>35){
+      blocks.push({line:c.line,source,top,bottom,sourceId,confidence:c.confidence||1,seq:blocks.length});
+    }
+  }
+}
+
+function addCandidate(arr,c){
+  if(!c || !c.line || !isTarget(c.line)) return;
+  const same=arr.find(x=>x.line===c.line && Math.abs(x.y-c.y)<35);
+  if(!same) arr.push(c);
+  else if((c.confidence||0)>(same.confidence||0)) Object.assign(same,c);
+}
+
+function detectHorizontalSeparators(source){
+  const W=source.naturalWidth||source.width, H=source.naturalHeight||source.height;
+  const scale=Math.min(.62,1800/W);
+  const w=Math.max(200,Math.round(W*scale)), h=Math.max(200,Math.round(H*scale));
+  const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  ctx.drawImage(source,0,0,w,h);
+  const d=ctx.getImageData(0,0,w,h).data;
+  const ratios=new Float32Array(h);
+  for(let y=0;y<h;y++){
+    let dark=0;
+    // Evitamos los 4% laterales para que no cuenten bordes de la fotografía.
+    const xa=Math.floor(w*.04), xb=Math.ceil(w*.96);
+    for(let x=xa;x<xb;x++){
+      const i=(y*w+x)*4;
+      const g=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+      if(g<195) dark++;
+    }
+    ratios[y]=dark/(xb-xa);
+  }
+  const ys=[];
+  for(let y=1;y<h-1;y++){
+    // Las reglas reales tienen muchos más píxeles oscuros que una fila de texto.
+    if(ratios[y]>.40 && ratios[y]>=ratios[y-1] && ratios[y]>=ratios[y+1]) ys.push(y/scale);
+  }
+  const out=[];
+  for(const y of ys){
+    if(!out.length || y-out[out.length-1]>8) out.push(y);
+    else out[out.length-1]=(out[out.length-1]+y)/2;
+  }
+  return out;
+}
+
+function makeOCRCanvasFromRect(source,x,y,w,h,scale,mode){
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(w*scale)); canvas.height=Math.max(1,Math.round(h*scale));
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(source,x,y,w,h,0,0,canvas.width,canvas.height);
+  if(mode!=='normal'){
+    const im=ctx.getImageData(0,0,canvas.width,canvas.height);
+    for(let i=0;i<im.data.length;i+=4){
+      const g=.299*im.data[i]+.587*im.data[i+1]+.114*im.data[i+2];
+      const v=mode==='gray'?Math.max(0,Math.min(255,(g-128)*1.9+128)):(g>170?255:0);
+      im.data[i]=im.data[i+1]=im.data[i+2]=v;
+    }
+    ctx.putImageData(im,0,0);
+  }
+  return {canvas,scale,offsetY:y};
+}
+
+function makeOCRCanvas(source,scale,mode){
+  const W=source.naturalWidth||source.width, H=source.naturalHeight||source.height;
+  return makeOCRCanvasFromRect(source,0,0,W,H,scale,mode);
+}
+
+function extractHeaderCandidates(data,scale,W,H,offsetY=0){
+  const out=[];
+  const lines=data.lines||[];
+  const words=data.words||[];
+
+  for(const ln of lines){
+    const text=ln.text||'';
+    const hit=findHeaderLine(text);
+    if(hit) out.push({line:hit.line,y:offsetY+(ln.bbox.y0||0)/scale,confidence:scoreHeader(text,hit.line)+hit.bonus});
+  }
+
+  const rows=[];
+  for(const w of words){
+    if(!w.text || !w.text.trim()) continue;
+    const y=w.bbox.y0;
+    let r=rows.find(r=>Math.abs(r.y-y)<24*scale);
+    if(!r){r={y,words:[]};rows.push(r);} r.words.push(w);
+  }
+  for(const r of rows){
+    r.words.sort((a,b)=>a.bbox.x0-b.bbox.x0);
+    const text=r.words.map(w=>w.text).join(' ');
+    const hit=findHeaderLine(text);
+    if(hit) out.push({line:hit.line,y:offsetY+r.y/scale,confidence:scoreHeader(text,hit.line)+hit.bonus+0.2});
+  }
+  return out;
+}
+
+function scoreHeader(text,line){
+  const c=cleanText(text); let score=0;
+  if(c.includes('LINEA')) score+=4;
+  if(c.includes(cleanText(line))) score+=2;
+  if(/[0-9A-Z]\s*[-–—]\s*[A-Z]/i.test(text)) score+=2;
+  if(c.length>12) score+=1;
+  return score;
+}
+
+const ROUTE_HINTS={
+  '21':['ALICANTE','P S JUAN','CAMPELLO'],
+  '23':['ALICANTE','SAN JUAN','MUTXAMEL'],
+  '24':['ALICANTE','UNIVERSIDAD','S VICENTE'],
+  'C53':['HOSPITAL','JOAN','CAMPELLO'],
+  '35':['TANGEL','HOSPITAL','SAN JUAN'],
+  'C51':['MUTXAMEL','BUSOT'],
+  'C52':['BUSOT','CAMPELLO'],
+  '45':['GIRASO','STA ISA','SALUD'],
+  '46':['HOSPITAL','POZO','SAN ANTONIO'],
+  'C6':['ALICANTE','AEROPUERTO']
+};
+
+function findHeaderLine(text){
+  const raw=String(text||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if(!raw.trim()) return null;
+  const compact=raw.replace(/[\u2010-\u2015]/g,'-').replace(/\s+/g,' ');
+  let token=null, bonus=0;
+  const m=compact.match(/(?:LINEA|L1NEA)[\s:;._-]*([A-Z0-9€@]{1,4})\s*(?=-|–|—)/i);
+  if(m){ token=m[1]; bonus=3; }
+  else {
+    const n=compact.match(/(?:^|[\s:;])([A-Z0-9€@]{1,4})\s*-\s*[A-Z]/i);
+    if(n){ token=n[1]; bonus=1; }
+  }
+  if(!token) return null;
+  let line=canonicalLine(token);
+  if(!isTarget(line)){
+    line=fuzzyTargetLine(line,compact);
+    if(!line) return null;
+    bonus+=1;
+  }
+  return {line,bonus};
+}
+
+function fuzzyTargetLine(candidate,text){
+  const c=canonicalLine(candidate);
+  // Correcciones que ya hemos comprobado en tus hojas reales. La descripción
+  // de la ruta desambigua errores típicos de OCR (21->22/2I, C53->C33, C6->C-E).
+  if(/ALICANTE.*AEROPUERTO/.test(text) && (c==='C' || c==='CE' || c==='C6' || c==='C8')) return 'C6';
+  if(/ALICANTE.*P\.?\s*S\.?\s*JUAN.*CAMPELLO/.test(text) && (c==='22'||c==='2I'||c==='21'||c==='23'||c==='24')) return '21';
+  if(/HOSPITAL.*JOAN.*CAMPELLO/.test(text) && (c==='C33'||c==='C3'||c==='C53')) return 'C53';
+  const scored=ALL_ORDER.map(t=>({t,d:levenshtein(c,t)})).sort((a,b)=>a.d-b.d);
+  if(scored[0] && scored[0].d<=1 && (!scored[1] || scored[1].d>scored[0].d)) return scored[0].t;
+  return null;
+}
+
+function levenshtein(a,b){
+  const m=a.length,n=b.length; const dp=Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=0;i<=m;i++)dp[i][0]=i; for(let j=0;j<=n;j++)dp[0][j]=j;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return dp[m][n];
+}
+
+function canonicalLine(s){
+  const raw=String(s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const x=raw.replace(/[^A-Z0-9]/g,'');
+  if(x==='135') return '35';
+  if(x==='CS1'||x==='C51') return 'C51';
+  if(x==='CS2'||x==='C52') return 'C52';
+  if(x==='C53') return 'C53';
+  if(x==='C6') return 'C6';
+  if(x==='C2') return 'C2';
+  if(x==='M1') return 'M1';
+  if(x==='M2') return 'M2';
+  if(x==='40A') return '40A';
+  if(x==='40B') return '40B';
+  return x;
+}
+
+function loadImage(url){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=url;});}
+
+function cropBlock(source,top,bottom){
+  const W=source.naturalWidth||source.width, H=source.naturalHeight||source.height;
+  const t=Math.max(0,Math.min(Math.round(top),H-1));
+  const b=Math.max(t+1,Math.min(Math.round(bottom),H));
+  const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=b-t;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,b-t);
+  ctx.drawImage(source,0,t,W,b-t,0,0,W,b-t);
+  return canvas.toDataURL('image/jpeg',0.98);
+}
+
+// Las hojas reales tienen bastante espacio blanco debajo del último servicio
+// de cada bloque. Si lo conservamos, el PDF acaba reduciendo TODOS los
+// servicios para que quepan. Buscamos el último rastro de tinta antes de la
+// siguiente cabecera y recortamos solo el blanco sobrante.
+function findContentBottom(source,start,end){
+  const W=source.naturalWidth||source.width, H=source.naturalHeight||source.height;
+  const s=Math.max(0,Math.floor(start));
+  const e=Math.max(s+1,Math.min(H,Math.floor(end)));
+  const canvas=document.createElement('canvas');
+  const scanW=Math.min(900,Math.max(300,Math.round(W*0.75)));
+  const x0=Math.max(0,Math.round((W-scanW)/2));
+  canvas.width=scanW; canvas.height=e-s;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  ctx.drawImage(source,x0,s,scanW,e-s,0,0,scanW,e-s);
+  const data=ctx.getImageData(0,0,scanW,e-s).data;
+  let last=-1;
+  // Un renglón de texto deja una cantidad apreciable de píxeles oscuros.
+  // Usamos un umbral bajo para no perder texto tenue o manuscrito.
+  for(let y=0;y<e-s;y++){
+    let dark=0;
+    for(let x=0;x<scanW;x++){
+      const i=(y*scanW+x)*4;
+      const g=0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
+      if(g<220) dark++;
+    }
+    if(dark/scanW>0.008) last=y;
+  }
+  return last>=0 ? Math.min(e,s+last+10) : Math.min(e,s+20);
+}
+
+async function createPDF(blocks){
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true});
+  const marginX=4.5, top=5, bottom=5, pageWidth=210, pageHeight=297;
+  const width=201, availableHeight=pageHeight-top-bottom;
+  const rendered=[];
+
+  for(const b of blocks){
+    const safeBottom=findContentBottom(b.source,b.top,b.bottom);
+    const data=cropBlock(b.source,Math.max(0,b.top-4),safeBottom);
+    const probe=await loadImage(data);
+    rendered.push({line:b.line,data,w:probe.naturalWidth,h:probe.naturalHeight});
+  }
+
+  function drawPage(lines,pageIndex){
+    if(pageIndex) pdf.addPage();
+    const items=lines.map(line=>rendered.find(r=>r.line===line)).filter(Boolean);
+    if(!items.length) return;
+
+    const separator=1.8;
+    const gaps=Math.max(0,items.length-1)*separator;
+    const naturalHeights=items.map(r=>width*(r.h/r.w));
+    const totalNatural=naturalHeights.reduce((a,b)=>a+b,0);
+    // El conjunto completo se escala de una sola vez. Nunca escalamos un
+    // servicio de forma independiente y nunca lo partimos entre páginas.
+    const scale=Math.min(1,(availableHeight-gaps)/totalNatural);
+    const w=width*scale;
+    const left=marginX+(width-w)/2;
+    let y=top;
+
+    items.forEach((r,i)=>{
+      const h=naturalHeights[i]*scale;
+      pdf.addImage(r.data,'JPEG',left,y,w,h,undefined,'FAST');
+      y+=h;
+      if(i<items.length-1){
+        pdf.setDrawColor(190,196,202);
+        pdf.setLineWidth(.12);
+        pdf.line(left,y+.8,left+w,y+.8);
+        y+=separator;
+      }
+    });
+  }
+
+  drawPage(PAGE1,0);
+  drawPage(PAGE2,1);
+  pdf.save('servicios-SAE-profesional-2-paginas.pdf');
+}
+</script>
+</body>
+</html>
